@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beadando</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+
+    <link rel="stylesheet" href="main.css">
+
+</head>
+<body>
+    <div id="map"></div>
+
+    <script>
+        //var map = L.map('map').setView([48.8556, 2.3376], 14);
+
+        var myIcon = L.icon({
+        iconUrl: 'location-icon.png',
+        iconSize: [45, 45]
+        });
+
+        var metroUrl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Métro_parisien_état_du_réseau_en_1939.jpeg/1280px-Métro_parisien_état_du_réseau_en_1939.jpeg',
+        metroBounds = [[48.8608, 2.3604], [48.8737, 2.3856]];
+        var metroMap = L.imageOverlay(metroUrl, metroBounds);
+
+        var eiffelTower = L.marker([48.85826, 2.29450],{icon:myIcon});//.addTo(map);
+        var notreDame = L.marker([48.85294, 2.34987],{icon:myIcon});//.addTo(map);
+        var louvre = L.marker([48.86115, 2.33586],{icon:myIcon});//.addTo(map);
+        var museedOrsay = L.marker([48.85992, 2.32653],{icon:myIcon});//.addTo(map);
+        var arcdeTriomphe = L.marker([48.87378, 2.29504],{icon:myIcon});//.addTo(map);
+        eiffelTower.bindPopup("<b>Eiffel Tower</b></br>Built: 1887-1889");
+        notreDame.bindPopup("<b>Notre Dame</b></br>Built: 1163–1345");
+        louvre.bindPopup("<b>Louvre</b></br>Built: 1793");
+        museedOrsay.bindPopup("<b>Musée d'Orsay</b></br>Built: 1986");
+        arcdeTriomphe.bindPopup("<b>Arc de Triomphe </b></br>Built: 1806–1836");
+
+        var fieldTheMarsCoordinates = [{
+            "type": "FeatureCollection",
+            "features": [
+                {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                "coordinates": [
+                    [
+                        2.2918643752298067,
+                        48.85774985834519
+                    ],
+                    [
+                        2.295242255257051,
+                        48.86005816585498
+                    ],
+                    [
+                        2.296903201791082,
+                        48.85900225116154
+                    ],
+                    [
+                        2.2963433321727393,
+                        48.85868301675259
+                    ],
+                    [
+                        2.298340200477014,
+                        48.85743061594894
+                    ],
+                    [
+                        2.2998518484456554,
+                        48.857602515954
+                    ],
+                    [
+                        2.300131783254187,
+                        48.857418337354744
+                    ],
+                    [
+                        2.2998518484456554,
+                        48.85642376120927
+                    ],
+                    [
+                        2.303770935770274,
+                        48.85395565356393
+                    ],
+                    [
+                        2.3034350140000015,
+                        48.85367322552747
+                    ],
+                    [
+                        2.303733611129587,
+                        48.853464473346264
+                    ],
+                    [
+                        2.3020913269165533,
+                        48.852347020398724
+                    ],
+                    [
+                        2.3017367428253124,
+                        48.85255577723933
+                    ],
+                    [
+                        2.301270184810619,
+                        48.85224878158425
+                    ],
+                    [
+                        2.29755638301188,
+                        48.854655577048106
+                    ],
+                    [
+                        2.2960633973642075,
+                        48.854446828962665
+                    ],
+                    [
+                        2.295578177028574,
+                        48.8548029281134
+                    ],
+                    [
+                        2.2958207871963623,
+                        48.85582209444246
+                    ],
+                    [
+                        2.293898568174768,
+                        48.85706225680818
+                    ],
+                    [
+                        2.2934320101601315,
+                        48.856730731263866
+                    ],
+                    [
+                        2.2918457129088097,
+                        48.85776213685807
+                    ]
+                    ],
+                    "type": "LineString"
+                }
+            }
+        ]
+        }]
+
+        var polygonStyle = {
+            "color": "green",
+            "weight": 6,
+            "opacity": 1
+        };
+
+        var fieldTheMars = L.geoJSON(fieldTheMarsCoordinates, {
+            style: polygonStyle
+        });
+
+        places = L.layerGroup([eiffelTower, notreDame, louvre, museedOrsay, arcdeTriomphe]);
+        metro = L.layerGroup([metroMap]);
+        fieldTheMarsPolygon = L.layerGroup([fieldTheMars]);
+
+        var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        });
+
+        var osmHOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        });
+
+        var overlay = {
+            "Places": places,
+            "Metro": metro,
+            "Field The Mars": fieldTheMarsPolygon
+        }
+
+        var maps = {
+            "OpenStreetMap": osm,
+            "OpenStreetMap HOT": osmHOT
+        };
+
+        var map = L.map('map', {
+          center: [
+            48.8556,
+            2.3376,
+          ],
+          zoom: 14, layers: [osm, places]
+        });
+
+        var layerControl = L.control.layers(maps, overlay).addTo(map);
+        
+    </script>
+</body>
+</html>
